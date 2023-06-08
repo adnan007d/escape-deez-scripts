@@ -20,22 +20,24 @@ class Tokenizer {
     parseString(): string {
         type Colon = `"` | `'`;
         let currentQuote: Colon | null = null;
-        let res = "";
+        let start = -1;
+        let end = -1;
         for (let i = 0; i < this.input.length; ++i) {
             if (this.input[i] === `"` || this.input[i] === `'`) {
                 if (currentQuote === this.input[i]) {
                     break;
                 } else if (currentQuote === null) {
                     currentQuote = this.input[i] as Colon;
+                    start = i + 1; // plus one to skip the the quote
                 } else {
-                    res += this.input[i];
+                    end = i;
                 }
             } else if (currentQuote !== null) {
-                res += this.input[i];
+                end = i;
             }
         }
 
-        return res;
+        return this.input.substring(start, end + 1);
     }
 }
 
