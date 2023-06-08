@@ -1,5 +1,3 @@
-type Colon = `"` | `'`;
-
 class Tokenizer {
     private input = "";
     private readPosition = 0;
@@ -23,29 +21,48 @@ class Tokenizer {
     }
 
     parseString(): string {
-        let currentQuote: Colon | null = null;
+        let currentQuote: `"` | `'` | null = null;
 
-        let start = 0;
-        let end = 0;
-
+        let res = "";
         while (this.ch !== "\0") {
-            if (this.ch === `"` || this.ch === `'`) {
-                if (currentQuote === this.ch) {
+            let stop = false;
+            switch (this.ch) {
+                case `'`: // Intentinal fall through
+                case `"`:
+                    if (currentQuote == this.ch) {
+                        stop = true;
+                    } else if (currentQuote === null) {
+                        currentQuote = this.ch;
+                    } else {
+                        res += this.ch;
+                    }
                     break;
-                } else if (currentQuote === null) {
-                    currentQuote = this.ch as Colon;
-                    start = this.currentPosition;
-                } else {
-                    end = this.currentPosition;
-                }
-            } else if (currentQuote !== null) {
-                end = this.currentPosition;
+                case `\\`:
+                    let i = 0;
+                    while (
+                        this.ch === `\\` &&
+                        this.readPosition < this.input.length
+                    ) {
+                        if ((i & 1) !== 0) {
+                            res += `\\`;
+                        }
+                        this.readChar();
+                        ++i;
+                    }
+                    // @ts-expect-error false positive
+                    if (this.ch !== currentQuote && (i & 1) === 0) {
+                        break;
+                    }
+                default:
+                    res += this.ch;
             }
-
+            // break when end of string reached
+            // if (stop) {
+            //    break;
+            // }
             this.readChar();
         }
-
-        return this.input.substring(start + 1, end + 1);
+        return res;
     }
 }
 
