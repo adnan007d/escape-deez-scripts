@@ -1,6 +1,6 @@
 import Tokenizer from "../src/regex-with-tokenizer";
 
-describe("Parse Strings", () => {
+describe("Parsing Simple Strings", () => {
     test("Double Quoted String", () => {
         const str = `"Hello World"`;
         const token = new Tokenizer(str);
