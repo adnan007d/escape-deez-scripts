@@ -38,28 +38,28 @@ class Tokenizer {
                     }
                     break;
                 case `\\`:
-                    let i = 0;
-                    while (
-                        this.ch === `\\` &&
-                        this.readPosition < this.input.length
-                    ) {
-                        if ((i & 1) !== 0) {
-                            res += `\\`;
-                        }
-                        this.readChar();
-                        ++i;
-                    }
-                    // @ts-expect-error false positive
-                    if (this.ch !== currentQuote && (i & 1) === 0) {
+                    if (this.readPosition > this.input.length) {
+                        res += this.ch;
                         break;
                     }
+
+                    if (this.input[this.readPosition] === currentQuote) {
+                        res += currentQuote;
+                        this.readChar();
+                    } else if (this.input[this.readPosition] === "\\") {
+                        res += "\\"
+                        this.readChar();
+                    } else {
+                        res += this.ch;
+                    }
+                    break;
                 default:
                     res += this.ch;
             }
             // break when end of string reached
-            // if (stop) {
-            //    break;
-            // }
+             if (stop) {
+                break;
+             }
             this.readChar();
         }
         return res;

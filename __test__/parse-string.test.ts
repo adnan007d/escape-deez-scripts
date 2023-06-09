@@ -77,10 +77,31 @@ describe("Parsed Complex Strings", () => {
     });
 
     test("Double BackSlash", () => {
-        const str = `"h\"ello\\\""`;
+        const str = `"h\\"ello\\""`;
         const token = new Tokenizer(str);
 
-        const expectedString = `h"ello\"`;
+        const expectedString = `h"ello"`;
+        expect(token.parseString()).toBe(expectedString);
+    });
+    test("Triple BackSlash", () => {
+        const str = `"h\\\"ello\\""`;
+        const token = new Tokenizer(str);
+
+        const expectedString = `h\"ello"`;
+        expect(token.parseString()).toBe(expectedString);
+    });
+    test("Four BackSlash", () => {
+        const str = `"h\\\\"ello\\""`;
+        const token = new Tokenizer(str);
+
+        const expectedString = `h\\`;
+        expect(token.parseString()).toBe(expectedString);
+    });
+    test("Four BackSlash With Single Quote in Between", () => {
+        const str = `"h\\\\'ello\\""`;
+        const token = new Tokenizer(str);
+
+        const expectedString = `h\\'ello"`;
         expect(token.parseString()).toBe(expectedString);
     });
 });
